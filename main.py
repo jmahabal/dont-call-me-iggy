@@ -1,13 +1,16 @@
 import praw
 import string 
 
-SUBREDDIT_NAME = 'warriors'
-RESPONSE = 'Hi! I think you might have used "Iggy" to refer to Andre Igoudala, our supreme leader. In [several](https://www.youtube.com/watch?v=-qSY3OVrS9E) [instances](https://twitter.com/andre/status/908090035697631232) he\'s said that he\'d appreciate being called by another name. Let\'s try to respect his wishes.'
+SUBREDDIT_NAME = 'parakeet'
+# RESPONSE = 'Hi! I think you may have used "Iggy" to refer to Andre Igoudala. In [several](https://www.youtube.com/watch?v=-qSY3OVrS9E) [instances](https://twitter.com/andre/status/908090035697631232) he\'s said that he\'d appreciate being called by another name. Let\'s try to respect his wishes and not call him \'Iggy\'.'
+RESPONSE = 'Hi, you seem to have used "Iggy" to refer to Andre Igoudala. In [several](https://www.youtube.com/watch?v=-qSY3OVrS9E) [instances](https://twitter.com/andre/status/908090035697631232) Andre has said that he would appreciate being called by another name.  &nbsp;  &nbsp;*****^(If you have complaints or suggestions on how to improve this bot please message myself or the moderators!)'
 
 import credentials
 
 CLIENT_ID = credentials.reddit['CLIENT_ID']
 CLIENT_SECRET = credentials.reddit['CLIENT_SECRET']
+USERNAME = credentials.reddit['USERNAME']
+PASSWORD = credentials.reddit['PASSWORD']
 
 print (CLIENT_ID)
  
@@ -15,16 +18,17 @@ USER_AGENT = 'script: reply to comments that contain iggy in /r/warriors (by /u/
  
 def authenticate():
     print("Authenticating...")
-    reddit = praw.Reddit(
+    return praw.Reddit(
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
-        user_agent=USER_AGENT)
-    print("Authenticaed as {}".format(reddit.user.me()))
+        user_agent=USER_AGENT,
+        username=USERNAME,
+        password=PASSWORD)
  
-def has_iggy(comment):
+def has_iggy(title):
     # strip punctuation and split on spaces
     exclude = set(string.punctuation) - set("-")
-    text = ''.join(ch if ch not in exclude else " " for ch in comment.lower()).split()
+    text = ''.join(ch if ch not in exclude else " " for ch in title.lower()).split()
     
     iggies = []
     for g in range(2, 5):
@@ -35,15 +39,17 @@ def has_iggy(comment):
 
 def watch_stream():
     print('Starting comment stream...')
-    for comment in reddit.subreddit(SUBREDDIT_NAME).stream.comments():
-        if comment.saved:
+    reddit = authenticate()
+    print("Authenticated as {}".format(reddit.user.me()))
+
+    for post in reddit.subreddit(SUBREDDIT_NAME).stream.submissions():
+        if post.saved:
             continue
 
-        not_self = comment.author != reddit.user.me()
-        if has_iggy(comment.body) and not_self:
-            comment.save()
-            reply = comment.reply(RESPONSE)
-            print('http://reddit.com{}'.format(reply.permalink()))
+        if has_iggy(post.title) and post.author != reddit.user.me():
+            post.save()
+            reply = post.reply(RESPONSE)
+            print ("Posted to: https://wwww.reddit.com/r/" + SUBREDDIT_NAME + "/comments/" + post.id + "//" + reply.id + "")
 
 def run_tests():
     print ("Should all be true:")
@@ -65,9 +71,8 @@ def run_tests():
     print (has_iggy("paging /u/dont-call-me-iggy"))
 
 if __name__ == '__main__':
-    # reddit = authenticate()
-    # watch_stream()
+    watch_stream()
 
     # if you want to run tests
     # run_tests()
-    pass
+    # pass
