@@ -2,8 +2,14 @@ import praw
 import string 
 
 SUBREDDIT_NAME = 'parakeet'
-# RESPONSE = 'Hi! I think you may have used "Iggy" to refer to Andre Igoudala. In [several](https://www.youtube.com/watch?v=-qSY3OVrS9E) [instances](https://twitter.com/andre/status/908090035697631232) he\'s said that he\'d appreciate being called by another name. Let\'s try to respect his wishes and not call him \'Iggy\'.'
-RESPONSE = 'Hi, you seem to have used "Iggy" to refer to Andre Igoudala. In [several](https://www.youtube.com/watch?v=-qSY3OVrS9E) [instances](https://twitter.com/andre/status/908090035697631232) Andre has said that he would appreciate being called by another name.  &nbsp;  &nbsp;*****^(If you have complaints or suggestions on how to improve this bot please message myself or the moderators!)'
+RESPONSE = '''
+Hi, you seem to have used "Iggy" to refer to Andre Igoudala, two-time NBA champion and bearer of the best-looking biceps in the NBA. In [several](https://www.youtube.com/watch?v=-qSY3OVrS9E) [instances](https://twitter.com/andre/status/908090035697631232) Andre has said that he would appreciate being called by another name.
+&nbsp;  
+&nbsp;
+
+*****
+^(If you have complaints or suggestions on how to improve this bot please message myself or the moderators!)
+'''
 
 import credentials
 
