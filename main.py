@@ -1,9 +1,9 @@
 import praw
 import string 
 
-SUBREDDIT_NAME = 'parakeet'
+SUBREDDIT_NAME = 'warriors'
 RESPONSE = '''
-Hi, you seem to have used "Iggy" to refer to Andre Igoudala, two-time NBA champion and bearer of the best-looking biceps in the NBA. In [several](https://www.youtube.com/watch?v=-qSY3OVrS9E) [instances](https://twitter.com/andre/status/908090035697631232) Andre has said that he would appreciate being called by another name.
+Hi, you seem to have used "Iggy" to refer to Andre Igoudala, two-time NBA champion and bearer of the best-looking biceps in the NBA. In [several](https://www.youtube.com/watch?v=-qSY3OVrS9E) [instances](https://twitter.com/andre/status/908090035697631232) Andre has said that he would rather be called something else, like Dre or AI.
 &nbsp;  
 &nbsp;
 
