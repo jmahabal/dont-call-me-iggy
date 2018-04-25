@@ -1,9 +1,10 @@
 import praw
+import time
 import string 
 
 SUBREDDIT_NAME = 'warriors'
 RESPONSE = '''
-Hi, you seem to have used "Iggy" to refer to Andre Igoudala, two-time NBA champion and bearer of the best-looking biceps in the NBA. In [several](https://www.youtube.com/watch?v=-qSY3OVrS9E) [instances](https://twitter.com/andre/status/908090035697631232) Andre has said that he would rather be called something else, like Dre or AI.
+Hi, you seem to have used "Iggy" to refer to Andre Igoudala, two-time NBA champion and bearer of the best-looking biceps in the NBA. In [several](https://www.youtube.com/watch?v=-qSY3OVrS9E) [instances](https://twitter.com/andre/status/908090035697631232) Andre has said that he would rather be called by a different nickname.
 &nbsp;  
 &nbsp;
 
@@ -17,8 +18,6 @@ CLIENT_ID = credentials.reddit['CLIENT_ID']
 CLIENT_SECRET = credentials.reddit['CLIENT_SECRET']
 USERNAME = credentials.reddit['USERNAME']
 PASSWORD = credentials.reddit['PASSWORD']
-
-print (CLIENT_ID)
  
 USER_AGENT = 'script: reply to comments that contain iggy in /r/warriors (by /u/dont-call-me-iggy)'
  
@@ -31,10 +30,10 @@ def authenticate():
         username=USERNAME,
         password=PASSWORD)
  
-def has_iggy(title):
+def has_iggy(text):
     # strip punctuation and split on spaces
     exclude = set(string.punctuation) - set("-")
-    text = ''.join(ch if ch not in exclude else " " for ch in title.lower()).split()
+    text = ''.join(ch if ch not in exclude else " " for ch in text.lower()).split()
     
     iggies = []
     for g in range(2, 5):
@@ -43,19 +42,29 @@ def has_iggy(title):
 
     return any(iggy in text for iggy in iggies)
 
+start_time = time.time()
+
 def watch_stream():
     print('Starting comment stream...')
     reddit = authenticate()
     print("Authenticated as {}".format(reddit.user.me()))
 
-    for post in reddit.subreddit(SUBREDDIT_NAME).stream.submissions():
-        if post.saved:
+    for comment in reddit.subreddit(SUBREDDIT_NAME).stream.comments():
+        if comment.author == reddit.user.me():
+            print ("comment #", comment.id, "not valid because from self")
+            continue
+        if comment.created_utc < start_time:
+            print ("comment #", comment.id, "not valid because of age")
+            continue
+        if comment.saved:
             continue
 
-        if has_iggy(post.title) and post.author != reddit.user.me():
-            post.save()
-            reply = post.reply(RESPONSE)
-            print ("Posted to: https://wwww.reddit.com/r/" + SUBREDDIT_NAME + "/comments/" + post.id + "//" + reply.id + "")
+        # contains the keyword we're looking for
+        if has_iggy(comment.body):
+            print ("processing comment #", comment.id)
+            comment.save()
+            reply = comment.reply(RESPONSE)
+            print ("Posted to: https://www.reddit.com/r/" + SUBREDDIT_NAME + "/comments/" + comment.submission.id + "//" + reply.id + "")
 
 def run_tests():
     print ("Should all be true:")
