@@ -3,7 +3,6 @@ import time
 import string 
 import random
 
-# SUBREDDIT_NAME = 'parakeet'
 SUBREDDIT_NAME = 'warriors'
 
 import credentials
