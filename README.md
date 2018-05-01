@@ -6,6 +6,9 @@ Built using Praw and hosted on a DigitalOcean droplet running `forever`.
 
 Changelog:
 
+5/1/18:
+* Now ignores comments whose _parent_ is /u/dont-call-me-iggy, not whose grandparent is (as was the intention)
+
 4/30/18:
 * Now ignores users who mention "bot" anywhere in the text, not just directly after "iggy"
 * Ignores comments whose grandparent author is /u/dont-call-me-iggy

@@ -70,19 +70,15 @@ def has_iggy(text):
 
 start_time = time.time()
 
-# https://github.com/acini/praw-antiabuse-functions
+# based on: https://github.com/acini/praw-antiabuse-functions
 def is_summon_chain(post, reddit):
   if not post.is_root:
     parent_comment_id = post.parent().id
     parent_comment = reddit.comment(id=parent_comment_id)
-    if parent_comment.is_root:
-        return False
+    if parent_comment.author != None and str(parent_comment.author.name) == USERNAME:
+      return True
     else:
-        grandparent_comment = reddit.comment(parent_comment.parent().id)
-        if grandparent_comment.author != None and str(grandparent_comment.author.name) == USERNAME:
-          return True
-        else:
-          return False
+      return False
   else:
     return False
 
@@ -99,7 +95,7 @@ def watch_stream():
             print ("comment #", comment.id, "not valid because of age")
             continue
         if is_summon_chain(comment, reddit):
-            print ("comment #", comment.id, "not valid because grandparent comment from bot")
+            print ("comment #", comment.id, "not valid because parent comment from bot")
             continue
         if comment.saved:
             continue
@@ -112,28 +108,28 @@ def watch_stream():
             print ("Posted to: https://www.reddit.com/r/" + SUBREDDIT_NAME + "/comments/" + comment.submission.id + "//" + reply.id + "")
 
 def run_tests():
-    # print ("Should all be true:")
-    # print (has_iggy("blah blah blah iggy"))
-    # print (has_iggy("iggy!!!!"))
-    # print (has_iggy("That reaction after the Iggy 3 was all time"))
-    # print (has_iggy("KLAY WITH 31. IGGY 4 FOR 5 FROM THREE. KD WITH 32. My lord."))
-    # print (has_iggy("iggy!!three!!!"))
-    # print (has_iggy("Talk about flipping the switch! Iggy's playing smart and intense."))
-    # print (has_iggy("Iggy, Dwest and JaVale all stepped up big time. Huge win!"))
-    # print (has_iggy("DONT CALL HIM IGGYYYYYY!!!!"))
-    # print (has_iggy("IGGGYYYY"))
-    # print ()
+    print ("Should all be true:")
+    print (has_iggy("blah blah blah iggy"))
+    print (has_iggy("iggy!!!!"))
+    print (has_iggy("That reaction after the Iggy 3 was all time"))
+    print (has_iggy("KLAY WITH 31. IGGY 4 FOR 5 FROM THREE. KD WITH 32. My lord."))
+    print (has_iggy("iggy!!three!!!"))
+    print (has_iggy("Talk about flipping the switch! Iggy's playing smart and intense."))
+    print (has_iggy("Iggy, Dwest and JaVale all stepped up big time. Huge win!"))
+    print (has_iggy("DONT CALL HIM IGGYYYYYY!!!!"))
+    print (has_iggy("IGGGYYYY"))
+    print ()
 
-    # print ("Should all be false:")
-    # print (has_iggy("andre igoudala"))
-    # print (has_iggy("getting jiggy with it"))
-    # print (has_iggy("dont call him 'iggy'!"))
-    # print (has_iggy('dont call him "iggy"!'))
-    # print (has_iggy("iggy-dala"))
-    # print (has_iggy("iggy azalea"))
-    # print (has_iggy("paging /u/dont-call-me-iggy"))
+    print ("Should all be false:")
+    print (has_iggy("andre igoudala"))
+    print (has_iggy("getting jiggy with it"))
+    print (has_iggy("dont call him 'iggy'!"))
+    print (has_iggy('dont call him "iggy"!'))
+    print (has_iggy("iggy-dala"))
+    print (has_iggy("iggy azalea"))
+    print (has_iggy("paging /u/dont-call-me-iggy"))
 
-    print ("Should return 10 different sample responses")
+    print ("Should return 10 different sample responses:")
     for i in range(1):
         print (generate_response())
 
