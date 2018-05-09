@@ -82,6 +82,14 @@ def is_summon_chain(post, reddit):
   else:
     return False
 
+def in_game_thread(post, reddit):
+    submission_id = post.submission.id
+    submission = reddit.submission(id=submission_id)
+    if "game thread" in submission.title.lower():
+        return True
+    else:
+        return False
+
 def watch_stream():
     print('Starting comment stream...')
     reddit = authenticate()
@@ -97,10 +105,12 @@ def watch_stream():
         if is_summon_chain(comment, reddit):
             print ("comment #", comment.id, "not valid because parent comment from bot")
             continue
+        if in_game_thread(comment, reddit):
+            print ("comment #", comment.id, "not valid because comment is in a game thread")
+            continue
         if comment.saved:
             continue
 
-        # contains the keyword we're looking for
         if has_iggy(comment.body):
             print ("processing comment #", comment.id)
             comment.save()
