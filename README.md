@@ -8,6 +8,12 @@ Built using Praw and hosted on a DigitalOcean droplet running `forever`.
 
 Changelog:
 
+5/22/18:
+
+* I keep track of the last 100 thread_ids posted to, and don't post to that thread again. When I hit 100 thread_ids, I remove the oldest one.
+
+* I only post at most once every 3 hours.
+
 5/9/18:
 
 * Now ignores Game Threads and Post Game Threads (more precisely, threads with "Game Thread" in their title)

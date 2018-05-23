@@ -34,9 +34,6 @@ PERSONAL_DESCRIPTIONS = set([
     'noted LeBron stopper',
 ])
 
-def generate_response_description_pair():
-    return 
-
 def generate_response():
    return '''
 Hi, you seem to have used "Iggy" to refer to Andre Iguodala, {} and {}. In [several](https://www.youtube.com/watch?v=-qSY3OVrS9E) [instances](https://twitter.com/andre/status/908090035697631232) Andre has said that he would rather be called by a different nickname.
@@ -70,6 +67,13 @@ def has_iggy(text):
 
 start_time = time.time()
 
+# keep track of the time last posted
+posted_last_time = time.time()
+
+# keep track of last thread ids
+# we limit it to 100 so that the array doesn't grow huge
+posted_thread_ids = []
+
 # based on: https://github.com/acini/praw-antiabuse-functions
 def is_summon_chain(post, reddit):
   if not post.is_root:
@@ -96,11 +100,20 @@ def watch_stream():
     print("Authenticated as {}".format(reddit.user.me()))
 
     for comment in reddit.subreddit(SUBREDDIT_NAME).stream.comments():
+        global posted_last_time
+        global posted_thread_ids
+
         if comment.author == reddit.user.me():
             print ("comment #", comment.id, "not valid because from self")
             continue
         if comment.created_utc < start_time:
             print ("comment #", comment.id, "not valid because of age")
+            continue
+        if time.time() - posted_last_time < 60 * 60 * 3: # three hours
+            print ("comment #", comment.id, "not valid because another comment was posted in the last three hours")
+            continue
+        if comment.submission.id in posted_thread_ids:
+            print ("comment #", comment.id, "not valid because comment is already posted in thread")
             continue
         if is_summon_chain(comment, reddit):
             print ("comment #", comment.id, "not valid because parent comment from bot")
@@ -115,6 +128,9 @@ def watch_stream():
             print ("processing comment #", comment.id)
             comment.save()
             reply = comment.reply(generate_response())
+            posted_last_time = time.time()
+            posted_thread_ids = posted_thread_ids[-100:] # keep newest 100
+            posted_thread_ids.append(comment.submission.id)
             print ("Posted to: https://www.reddit.com/r/" + SUBREDDIT_NAME + "/comments/" + comment.submission.id + "//" + reply.id + "")
 
 def run_tests():
