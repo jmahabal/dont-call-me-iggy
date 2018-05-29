@@ -74,25 +74,14 @@ posted_last_time = time.time()
 # we limit it to 100 so that the array doesn't grow huge
 posted_thread_ids = []
 
-# based on: https://github.com/acini/praw-antiabuse-functions
-def is_summon_chain(post, reddit):
-  if not post.is_root:
-    parent_comment_id = post.parent().id
-    parent_comment = reddit.comment(id=parent_comment_id)
-    if parent_comment.author != None and str(parent_comment.author.name) == USERNAME:
-      return True
-    else:
-      return False
-  else:
-    return False
-
 def in_game_thread(post, reddit):
     submission_id = post.submission.id
     submission = reddit.submission(id=submission_id)
     if "game thread" in submission.title.lower():
         return True
-    else:
-        return False
+    if "daily discussion" in submission.title.lower():
+        return True
+    return False
 
 def watch_stream():
     print('Starting comment stream...')
@@ -109,17 +98,17 @@ def watch_stream():
         if comment.created_utc < start_time:
             print ("comment #", comment.id, "not valid because of age")
             continue
-        if time.time() - posted_last_time < 60 * 60 * 3: # three hours
-            print ("comment #", comment.id, "not valid because another comment was posted in the last three hours")
-            continue
         if comment.submission.id in posted_thread_ids:
             print ("comment #", comment.id, "not valid because comment is already posted in thread")
             continue
-        if is_summon_chain(comment, reddit):
-            print ("comment #", comment.id, "not valid because parent comment from bot")
-            continue
         if in_game_thread(comment, reddit):
             print ("comment #", comment.id, "not valid because comment is in a game thread")
+            continue
+        if time.time() - posted_last_time < 60 * 60 * 3: # three hours
+            print ("comment #", comment.id, "not valid because another comment was posted in the last three hours")
+            # add the thread_id anyway, so that we don't reply to a 'new' iggy while ignoring an 'old' one
+            posted_thread_ids = posted_thread_ids[-100:] # keep newest 100
+            posted_thread_ids.append(comment.submission.id)    
             continue
         if comment.saved:
             continue

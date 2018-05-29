@@ -8,6 +8,14 @@ Built using Praw and hosted on a DigitalOcean droplet running `forever`.
 
 Changelog:
 
+5/29/18:
+
+* Now also ignores the Daily Discussion Thread.
+
+* Removed the condition for a chain of comments, since we only post once per thread anyway.
+
+* When the bot doesn't post a comment because it has posted too recently, add that thread_id to the list of already-posted thread_ids, so that if there's a new "Iggy" comment on that thread the bot doesn't respond to it (because it is confusing that it responded to the 'newer' "Iggy" and not the 'old' one).
+
 5/22/18:
 
 * I keep track of the last 100 thread_ids posted to, and don't post to that thread again. When I hit 100 thread_ids, I remove the oldest one.
