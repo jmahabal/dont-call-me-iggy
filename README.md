@@ -8,6 +8,10 @@ Built using Praw and hosted on a DigitalOcean droplet running `forever`.
 
 Changelog:
 
+6/12/18:
+
+* Updated copy to reflect Andre winning his third championship.
+
 5/29/18:
 
 * Now also ignores the Daily Discussion Thread.

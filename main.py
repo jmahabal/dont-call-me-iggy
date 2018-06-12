@@ -24,7 +24,7 @@ def authenticate():
         password=PASSWORD)
  
 NBA_DESCRIPTIONS = set([
-    'two-time NBA champion',
+    'three-time NBA champion',
     'NBA Finals MVP',
     'NBA All-Star',
 ])
